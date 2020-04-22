@@ -12,7 +12,7 @@ The resources below are either already integrated within the application or plan
 | Binaryedge    | COMPLETED         |
 | Censys        | COMPLETED         |
 | Zoomeye       | IN-PROGRESS       |
-| Onyphe        | IN-PROGRESS       |
+| Onyphe        | COMPLETED         |
 | Spyse         | IN-PROGRESS       |
 
 ## Flags

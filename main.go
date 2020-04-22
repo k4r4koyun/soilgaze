@@ -36,6 +36,9 @@ type OSINTResponses struct {
 	Shodan     OSINTInfo
 	Binaryedge OSINTInfo
 	Censys     OSINTInfo
+	Zoomeye    OSINTInfo
+	Onyphe     OSINTInfo
+	Spyse      OSINTInfo
 }
 
 // OSINTInfo is a generic struct for OSINT information

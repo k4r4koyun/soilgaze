@@ -46,7 +46,7 @@ func (c Censys) getRequest(address string) (string, error) {
 	req, err := http.NewRequest("GET", address, nil)
 
 	if err != nil {
-		fmt.Printf("An error occured while preparing basic-auth request")
+		fmt.Printf("An error occured while preparing Censys request")
 		return "", err
 	}
 
@@ -55,14 +55,14 @@ func (c Censys) getRequest(address string) (string, error) {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		fmt.Printf("An error occured while sending basic-auth request")
+		fmt.Printf("An error occured while sending Censys request")
 		return "", err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		fmt.Printf("An error occured while reading basic-auth response")
+		fmt.Printf("An error occured while reading Censys response")
 		return "", err
 	}
 
@@ -77,7 +77,7 @@ func (c Censys) postRequest(address string, payload string) (string, error) {
 	req, err := http.NewRequest("POST", address, strings.NewReader(payload))
 
 	if err != nil {
-		fmt.Printf("An error occured while preparing basic-auth request")
+		fmt.Printf("An error occured while preparing Censys request")
 		return "", err
 	}
 
@@ -86,14 +86,14 @@ func (c Censys) postRequest(address string, payload string) (string, error) {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		fmt.Printf("An error occured while sending basic-auth request")
+		fmt.Printf("An error occured while sending Censys request")
 		return "", err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		fmt.Printf("An error occured while reading basic-auth response")
+		fmt.Printf("An error occured while reading Censys response")
 		return "", err
 	}
 
