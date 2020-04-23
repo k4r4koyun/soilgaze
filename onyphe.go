@@ -84,6 +84,8 @@ func (o Onyphe) queryQuota() int {
 }
 
 func (o Onyphe) check(allHosts *[]HostStruct) {
+	log.Println("================== ONYPHE ==================")
+
 	if o.apiKey == "" {
 		log.Println("Onyphe: API key value is empty, will skip this resource!")
 		return

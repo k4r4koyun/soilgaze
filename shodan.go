@@ -15,6 +15,8 @@ type Shodan struct {
 }
 
 func (s Shodan) check(allHosts *[]HostStruct) {
+	log.Println("================== SHODAN ==================")
+
 	if s.apiKey == "" {
 		log.Println("Shodan: API key value is empty, will skip this resource!")
 		return

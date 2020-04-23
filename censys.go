@@ -134,9 +134,6 @@ func (c Censys) searchPorts(allHosts *[]HostStruct, filterString string) {
 		log.Fatal(err)
 	}
 
-	log.Println(string(queryString))
-	log.Println(response)
-
 	results := gjson.Get(response, "results")
 	for _, result := range results.Array() {
 		resultIP := result.Get("ip").String()
@@ -157,6 +154,8 @@ func (c Censys) searchPorts(allHosts *[]HostStruct, filterString string) {
 }
 
 func (c Censys) check(allHosts *[]HostStruct) {
+	log.Println("================== CENSYS ==================")
+
 	if c.apiKey == "" {
 		log.Println("Censys: API key value is empty, will skip this resource!")
 		return

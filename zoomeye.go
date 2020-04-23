@@ -94,6 +94,8 @@ func (z Zoomeye) acquireJWT() string {
 }
 
 func (z Zoomeye) check(allHosts *[]HostStruct) {
+	log.Println("================== ZOOMEYE ==================")
+
 	log.Println("Zoomeye is not implemented yet...")
 	return
 

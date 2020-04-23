@@ -95,6 +95,8 @@ func (b Binaryedge) searchPorts(allHosts *[]HostStruct, queryString string) {
 }
 
 func (b Binaryedge) check(allHosts *[]HostStruct) {
+	log.Println("================== BINARYEDGE ==================")
+
 	if b.apiKey == "" {
 		log.Println("Binaryedge: API key value is empty, will skip this resource!")
 		return
