@@ -8,6 +8,9 @@ type Spyse struct {
 }
 
 func (s Spyse) check(allHosts *[]HostStruct) {
+	log.Println("Spyse is not implemented yet...")
+	return
+
 	if s.apiKey == "" {
 		log.Println("Spyse: API key value is empty, will skip this resource!")
 		return

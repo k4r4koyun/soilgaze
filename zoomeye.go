@@ -94,6 +94,9 @@ func (z Zoomeye) acquireJWT() string {
 }
 
 func (z Zoomeye) check(allHosts *[]HostStruct) {
+	log.Println("Zoomeye is not implemented yet...")
+	return
+
 	if z.username == "" || z.password == "" {
 		log.Println("Zoomeye: One or more credential values are empty, will skip this resource!")
 		return

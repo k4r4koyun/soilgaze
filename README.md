@@ -22,3 +22,9 @@ The resources below are either already integrated within the application or plan
 | host-file     | The location of the file that contains a list of hosts |
 | osint-list    | Comma-separated string that contains OSINT resources   |
 | out-file      | Destination to save JSON output of enumeration results |
+
+## Current Situation
+* Spyse has multiple issues that prevents me from implementing it:
+  * There are no endpoints for checking remaining query rights. Even the web application does not show such information.
+  * API is returning unstable responses. Currently getting 401 even with a brand new account.
+* Zoomeye also has an issue. It requires a phone number to register which I will not give, naturally.
