@@ -9,7 +9,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// Shodan something bla bla
+// Shodan struct that holds the API key
 type Shodan struct {
 	apiKey string
 }

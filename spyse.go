@@ -1,6 +1,6 @@
 package main
 
-// Spyse something bla bla
+// Spyse struct that holds the API key
 type Spyse struct {
 	apiKey string
 }

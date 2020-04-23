@@ -15,7 +15,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// Censys something bla bla
+// Censys struct that holds the API key
 type Censys struct {
 	apiKey string
 }

@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// OSINT bla bla
+// OSINT interface to couple methods with respected .go files
 type OSINT interface {
 	check(*[]HostStruct)
 }

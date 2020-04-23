@@ -12,7 +12,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// Onyphe something bla bla
+// Onyphe struct that holds the API key
 type Onyphe struct {
 	apiKey string
 }

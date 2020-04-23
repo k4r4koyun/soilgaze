@@ -13,7 +13,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// Binaryedge something bla bla
+// Binaryedge struct that holds the API key
 type Binaryedge struct {
 	apiKey string
 }

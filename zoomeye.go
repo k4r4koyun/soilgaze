@@ -11,7 +11,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// Zoomeye something bla bla
+// Zoomeye struct that holds the API key
 type Zoomeye struct {
 	username string
 	password string
