@@ -157,6 +157,11 @@ func (c Censys) searchPorts(allHosts *[]HostStruct, filterString string) {
 }
 
 func (c Censys) check(allHosts *[]HostStruct) {
+	if c.apiKey == "" {
+		log.Println("Censys: API key value is empty, will skip this resource!")
+		return
+	}
+
 	usedQueries, allowance := c.queryQuota()
 
 	log.Println("Censys used queries: " + strconv.Itoa(usedQueries))

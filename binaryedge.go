@@ -95,6 +95,11 @@ func (b Binaryedge) searchPorts(allHosts *[]HostStruct, queryString string) {
 }
 
 func (b Binaryedge) check(allHosts *[]HostStruct) {
+	if b.apiKey == "" {
+		log.Println("Binaryedge: API key value is empty, will skip this resource!")
+		return
+	}
+
 	queriesLeft, apiPlan := b.queryQuota()
 
 	log.Println("Binaryedge left queries: " + strconv.Itoa(queriesLeft))

@@ -15,6 +15,11 @@ type Shodan struct {
 }
 
 func (s Shodan) check(allHosts *[]HostStruct) {
+	if s.apiKey == "" {
+		log.Println("Shodan: API key value is empty, will skip this resource!")
+		return
+	}
+
 	for index := range *allHosts {
 		response, err := sendGETRequest("https://api.shodan.io/shodan/host/" + (*allHosts)[index].IPAddress + "?key=" + s.apiKey)
 
@@ -22,7 +27,7 @@ func (s Shodan) check(allHosts *[]HostStruct) {
 			log.Fatal("An error happened while checking Shodan results.")
 		} else {
 			value := gjson.Get(response, "ports")
-			log.Println("SHODAN - Open ports for " + (*allHosts)[index].IPAddress + ": " + value.String())
+			log.Println("Shodan: Open ports for " + (*allHosts)[index].IPAddress + ": " + value.String())
 
 			// println(value.Array()[0].String())
 

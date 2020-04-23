@@ -94,6 +94,11 @@ func (z Zoomeye) acquireJWT() string {
 }
 
 func (z Zoomeye) check(allHosts *[]HostStruct) {
+	if z.username == "" || z.password == "" {
+		log.Println("Zoomeye: One or more credential values are empty, will skip this resource!")
+		return
+	}
+
 	zoomeyeJWT := z.acquireJWT()
 
 	response, err := z.getRequest("https://api.zoomeye.org/resources-info", zoomeyeJWT)

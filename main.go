@@ -48,14 +48,18 @@ type OSINTInfo struct {
 
 func main() {
 	var err error
-
 	var allHosts []HostStruct
+	var apiKeys *APIKeys
 
 	var hostFile string
+	var configFile string
+	var isEnvSet bool
 	var osintList string
 	var outFile string
 
-	flag.StringVar(&hostFile, "host-file", "", "File location to read target hosts")
+	flag.StringVar(&hostFile, "host-file", "", "Location of the file that has a list of target hosts")
+	flag.StringVar(&configFile, "config-file", "", "Location of the file that holds API key values in YAML format")
+	flag.BoolVar(&isEnvSet, "config-env", false, "Should look at environment variables for API keys")
 	flag.StringVar(&osintList, "osint-list", "", "OSINT resources to gather information from. Example: --osint-list=shodan,binaryedge")
 	flag.StringVar(&outFile, "out-file", "", "File to write the results in JSON format. If not given, results will only be printed to console.")
 	flag.Parse()
@@ -64,8 +68,15 @@ func main() {
 		log.Fatal("A list of hosts should be provided!")
 	}
 
-	var apiKeys *APIKeys
-	apiKeys, err = loadConfig()
+	if isEnvSet {
+		log.Println("Checking environment variables for API key values...")
+		apiKeys, err = loadEnvironment()
+	} else {
+		if configFile == "" {
+			log.Println("Config file location is not provided, will try to open default 'config.yaml' file...")
+		}
+		apiKeys, err = loadConfig(configFile)
+	}
 
 	if err != nil {
 		log.Fatal(err)
@@ -90,7 +101,7 @@ func main() {
 		binaryedge.check(&allHosts)
 		censys.check(&allHosts)
 		// zoomeye.check(&allHosts)
-		// onyphe.check(&allHosts)
+		onyphe.check(&allHosts)
 		// spyse.check(&allHosts)
 	} else {
 		resources := strings.Split(osintList, ",")

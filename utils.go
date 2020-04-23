@@ -101,10 +101,17 @@ func sendGETRequest(address string) (string, error) {
 
 // FILES =====================================================
 
-func loadConfig() (*APIKeys, error) {
+func loadConfig(path string) (*APIKeys, error) {
 	apiKeys := new(APIKeys)
+	var configFile *os.File
+	var err error
 
-	configFile, err := os.Open("config.yaml")
+	if path == "" {
+		configFile, err = os.Open("config.yaml")
+	} else {
+		configFile, err = os.Open(path)
+	}
+
 	if err != nil {
 		return apiKeys, errors.New("Could not read the config file. ")
 	}
@@ -117,7 +124,19 @@ func loadConfig() (*APIKeys, error) {
 	}
 
 	return apiKeys, nil
+}
+func loadEnvironment() (*APIKeys, error) {
+	apiKeys := new(APIKeys)
 
+	apiKeys.Shodan = os.Getenv("SG_SHODAN")
+	apiKeys.BinaryEdge = os.Getenv("SG_BINARYEDGE")
+	apiKeys.Censys = os.Getenv("SG_CENSYS")
+	apiKeys.ZoomEyeU = os.Getenv("SG_ZOOMEYE_U")
+	apiKeys.ZoomEyeP = os.Getenv("SG_ZOOMEYE_P")
+	apiKeys.Onyphe = os.Getenv("SG_ONYPHE")
+	apiKeys.Spyse = os.Getenv("SG_SPYSE")
+
+	return apiKeys, nil
 }
 
 func readLines(path string) ([]string, error) {
