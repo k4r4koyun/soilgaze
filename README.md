@@ -17,11 +17,23 @@ The resources below are either already integrated within the application or plan
 
 ## Flags
 
-| Flags         | Functions                                              |
-| ------------- | ------------------------------------------------------ |
-| host-file     | The location of the file that contains a list of hosts |
-| osint-list    | Comma-separated string that contains OSINT resources   |
-| out-file      | Destination to save JSON output of enumeration results |
+| Flags         | Functions                                                    |
+| ------------- | ------------------------------------------------------------ |
+| host-file     | PATH: Location of the file that contains a list of hosts     |
+| config-file   | PATH: Location of the file that contains API keys as YAML    |
+| config-env    | BOOL: Switch to check environment variables for API keys     |
+| osint-list    | LIST: Comma-separated string that contains OSINT resources   |
+| out-file      | PATH: Destination to save JSON output of enumeration results |
+
+#### ENV Variable Names
+
+* SG_SHODAN
+* SG_BINARYEDGE
+* SG_CENSYS
+* SG_ZOOMEYE_U
+* SG_ZOOMEYE_P
+* SG_ONYPHE
+* SG_SPYSE
 
 ## Current Situation
 * Spyse has multiple issues that prevents me from implementing it:
