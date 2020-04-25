@@ -1,20 +1,23 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
+	"sort"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/tidwall/gjson"
 )
 
 // Zoomeye struct that holds the API key
 type Zoomeye struct {
-	username string
-	password string
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func (z Zoomeye) getRequest(address string, JWT string) (string, error) {
@@ -80,11 +83,12 @@ func (z Zoomeye) postRequest(address string, payload string, JWT string) (string
 }
 
 func (z Zoomeye) acquireJWT() string {
-	data := url.Values{}
-	data.Set("username", z.username)
-	data.Set("password", z.password)
+	credentials, err := json.Marshal(&z)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	response, err := z.postRequest("https://api.zoomeye.org/user/login", data.Encode(), "")
+	response, err := z.postRequest("https://api.zoomeye.org/user/login", string(credentials), "")
 
 	if err != nil {
 		log.Fatal(err)
@@ -96,21 +100,49 @@ func (z Zoomeye) acquireJWT() string {
 func (z Zoomeye) check(allHosts *[]HostStruct) {
 	log.Println("================== ZOOMEYE ==================")
 
-	log.Println("Zoomeye is not implemented yet...")
-	return
-
-	if z.username == "" || z.password == "" {
+	if z.Username == "" || z.Password == "" {
 		log.Println("Zoomeye: One or more credential values are empty, will skip this resource!")
 		return
 	}
 
 	zoomeyeJWT := z.acquireJWT()
 
-	response, err := z.getRequest("https://api.zoomeye.org/resources-info", zoomeyeJWT)
+	time.Sleep(2 * time.Second)
 
+	response, err := z.getRequest("https://api.zoomeye.org/resources-info", zoomeyeJWT)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println(response)
+	time.Sleep(2 * time.Second)
+
+	remainingCredits := int(gjson.Get(response, "resources").Get("search").Int())
+	log.Println("Zoomeye remaining queries: " + strconv.Itoa(remainingCredits))
+
+	if remainingCredits-len(*allHosts) < 0 {
+		log.Println("Zoomeye: Remaining query allowance is not enough for the host list, skipping this OSINT resource...")
+		return
+	}
+
+	for index := range *allHosts {
+		response, err = z.getRequest("https://api.zoomeye.org/host/search?query=ip:"+(*allHosts)[index].IPAddress, zoomeyeJWT)
+
+		if err != nil {
+			log.Fatal("An error happened while checking Zoomeye results.")
+		} else {
+			matches := gjson.Get(response, "matches")
+
+			var portArray []int
+			for _, match := range matches.Array() {
+
+				portInt := int(match.Get("portinfo").Get("port").Int())
+				portArray = append(portArray, portInt)
+			}
+
+			sort.Ints(portArray)
+			(*allHosts)[index].OSINTResponse.Zoomeye.OpenPorts = portArray
+		}
+
+		time.Sleep(2 * time.Second)
+	}
 }
