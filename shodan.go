@@ -1,7 +1,11 @@
 package main
 
 import (
+	"errors"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"sort"
 	"strconv"
 	"time"
@@ -14,6 +18,27 @@ type Shodan struct {
 	apiKey string
 }
 
+func (s Shodan) sendGETRequest(address string) (string, error) {
+	resp, err := http.Get(address)
+
+	if err != nil {
+		return "", err
+	}
+
+	if resp.StatusCode >= 400 {
+		return "", errors.New("Non 2XX/3XX HTTP code received. ")
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(body), nil
+}
+
 func (s Shodan) check(allHosts *[]HostStruct) {
 	log.Println("================== SHODAN ==================")
 
@@ -23,15 +48,13 @@ func (s Shodan) check(allHosts *[]HostStruct) {
 	}
 
 	for index := range *allHosts {
-		response, err := sendGETRequest("https://api.shodan.io/shodan/host/" + (*allHosts)[index].IPAddress + "?key=" + s.apiKey)
+		response, err := s.sendGETRequest("https://api.shodan.io/shodan/host/" + (*allHosts)[index].IPAddress + "?key=" + s.apiKey)
 
 		if err != nil {
-			log.Fatal("An error happened while checking Shodan results.")
+			log.Println(fmt.Errorf("An error occured while checking results: %v", err))
 		} else {
 			value := gjson.Get(response, "ports")
-			log.Println("Shodan: Open ports for " + (*allHosts)[index].IPAddress + ": " + value.String())
-
-			// println(value.Array()[0].String())
+			log.Println("Open ports for " + (*allHosts)[index].IPAddress + ": " + value.String())
 
 			var portArray []int
 			for _, port := range value.Array() {

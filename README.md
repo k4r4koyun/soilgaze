@@ -13,7 +13,7 @@ The resources below are either already integrated within the application or plan
 | Shodan        | COMPLETED         |
 | Binaryedge    | COMPLETED         |
 | Censys        | COMPLETED         |
-| Zoomeye       | COMPLETED       |
+| Zoomeye       | COMPLETED         |
 | Onyphe        | COMPLETED         |
 | Spyse         | IN-PROGRESS       |
 

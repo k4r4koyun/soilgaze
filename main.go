@@ -100,7 +100,7 @@ func main() {
 		shodan.check(&allHosts)
 		binaryedge.check(&allHosts)
 		censys.check(&allHosts)
-		// zoomeye.check(&allHosts)
+		zoomeye.check(&allHosts)
 		onyphe.check(&allHosts)
 		// spyse.check(&allHosts)
 	} else {

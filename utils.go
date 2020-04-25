@@ -4,10 +4,8 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net"
-	"net/http"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -76,27 +74,6 @@ func prepareHostStruct(hostFile []string, allHosts *[]HostStruct) {
 			}
 		}
 	}
-}
-
-// NETWORK =====================================================
-
-func sendGETRequest(address string) (string, error) {
-	resp, err := http.Get(address)
-
-	if err != nil {
-		fmt.Printf("An error occured while sending request")
-		return "", err
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		fmt.Printf("An error occured while reading body")
-		return "", err
-	}
-
-	return string(body), nil
 }
 
 // FILES =====================================================
