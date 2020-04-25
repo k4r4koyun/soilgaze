@@ -82,19 +82,18 @@ func (z Zoomeye) postRequest(address string, payload string, JWT string) (string
 	return string(body), nil
 }
 
-func (z Zoomeye) acquireJWT() string {
+func (z Zoomeye) acquireJWT() (string, error) {
 	credentials, err := json.Marshal(&z)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	response, err := z.postRequest("https://api.zoomeye.org/user/login", string(credentials), "")
-
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
-	return gjson.Get(response, "access_token").String()
+	return gjson.Get(response, "access_token").String(), nil
 }
 
 func (z Zoomeye) check(allHosts *[]HostStruct) {
@@ -105,13 +104,18 @@ func (z Zoomeye) check(allHosts *[]HostStruct) {
 		return
 	}
 
-	zoomeyeJWT := z.acquireJWT()
+	zoomeyeJWT, err := z.acquireJWT()
+	if err != nil {
+		log.Println("Could not fetch a Zoomeye JWT, not continuing.")
+		return
+	}
 
 	time.Sleep(2 * time.Second)
 
 	response, err := z.getRequest("https://api.zoomeye.org/resources-info", zoomeyeJWT)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Could not fetch remaining queries, not continuing.")
+		return
 	}
 
 	time.Sleep(2 * time.Second)
@@ -128,7 +132,7 @@ func (z Zoomeye) check(allHosts *[]HostStruct) {
 		response, err = z.getRequest("https://api.zoomeye.org/host/search?query=ip:"+(*allHosts)[index].IPAddress, zoomeyeJWT)
 
 		if err != nil {
-			log.Fatal("An error happened while checking Zoomeye results.")
+			log.Println("An error happened while checking single host.")
 		} else {
 			matches := gjson.Get(response, "matches")
 

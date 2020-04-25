@@ -102,20 +102,20 @@ func (c Censys) postRequest(address string, payload string) (string, error) {
 
 // MAIN FUNCTIONS =============================================
 
-func (c Censys) queryQuota() (int, int) {
+func (c Censys) queryQuota() (int, int, error) {
 	response, err := c.getRequest("https://censys.io/api/v1/account")
 
 	if err != nil {
-		log.Fatal(err)
+		return 0, 0, err
 	}
 
 	usedQueries := int(gjson.Get(response, "quota").Get("used").Int())
 	allowance := int(gjson.Get(response, "quota").Get("allowance").Int())
 
-	return usedQueries, allowance
+	return usedQueries, allowance, nil
 }
 
-func (c Censys) searchPorts(allHosts *[]HostStruct, filterString string) {
+func (c Censys) searchPorts(allHosts *[]HostStruct, filterString string) error {
 	queryBody := censysQueryBody{
 		filterString,
 		1, // Pages start from 1
@@ -125,13 +125,13 @@ func (c Censys) searchPorts(allHosts *[]HostStruct, filterString string) {
 
 	queryString, err := json.Marshal(&queryBody)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	response, err := c.postRequest("https://censys.io/api/v1/search/ipv4", string(queryString))
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	results := gjson.Get(response, "results")
@@ -151,6 +151,8 @@ func (c Censys) searchPorts(allHosts *[]HostStruct, filterString string) {
 			}
 		}
 	}
+
+	return nil
 }
 
 func (c Censys) check(allHosts *[]HostStruct) {
@@ -161,7 +163,12 @@ func (c Censys) check(allHosts *[]HostStruct) {
 		return
 	}
 
-	usedQueries, allowance := c.queryQuota()
+	usedQueries, allowance, err := c.queryQuota()
+
+	if err != nil {
+		log.Println("Could not query quota, will skip this resource.")
+		return
+	}
 
 	log.Println("Censys used queries: " + strconv.Itoa(usedQueries))
 	log.Println("Censys allowance: " + strconv.Itoa(allowance))
@@ -194,7 +201,11 @@ func (c Censys) check(allHosts *[]HostStruct) {
 			}
 		}
 
-		c.searchPorts(allHosts, queryString)
+		err := c.searchPorts(allHosts, queryString)
+		if err != nil {
+			log.Println("Could not query a batch of hosts.")
+		}
+
 		time.Sleep(3 * time.Second)
 	}
 }

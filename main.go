@@ -133,7 +133,7 @@ func main() {
 
 	if outFile != "" {
 		if err := writeStringToFile(string(finalResult), outFile); err != nil {
-			log.Fatalf("writeStringToFile: %s", err)
+			log.Fatalf("Could not write results to file: %s", err)
 		}
 	}
 }

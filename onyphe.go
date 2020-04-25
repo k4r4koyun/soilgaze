@@ -70,34 +70,39 @@ func (o Onyphe) unique(intSlice []int) []int {
 	return list
 }
 
-func (o Onyphe) queryQuota() int {
+func (o Onyphe) queryQuota() (int, error) {
 	response, err := o.getRequest("https://www.onyphe.io/api/v2/user")
 
 	if err != nil {
-		log.Fatal(err)
+		return 0, err
 	}
 
 	firstResult := gjson.Get(response, "results.0")
 	credits := int(firstResult.Get("credits").Int())
 
-	return credits
+	return credits, nil
 }
 
 func (o Onyphe) check(allHosts *[]HostStruct) {
 	log.Println("================== ONYPHE ==================")
 
 	if o.apiKey == "" {
-		log.Println("Onyphe: API key value is empty, will skip this resource!")
+		log.Println("API key value is empty, will skip this resource!")
 		return
 	}
 
-	credits := o.queryQuota()
+	credits, err := o.queryQuota()
+	if err != nil {
+		log.Println("Could not query quota, will skip this resource.")
+		return
+	}
+
 	log.Println("Remaining credits: " + strconv.Itoa(credits))
 
 	limitCalculation := credits - len(*allHosts)
 
 	if limitCalculation < 0 {
-		log.Println("Onyphe: Remaining query allowance is not enough for the host list, skipping this OSINT resource...")
+		log.Println("Remaining query allowance is not enough for the host list, skipping this OSINT resource...")
 		return
 	}
 
@@ -105,7 +110,7 @@ func (o Onyphe) check(allHosts *[]HostStruct) {
 		response, err := o.getRequest("https://www.onyphe.io/api/v2/simple/synscan/" + (*allHosts)[index].IPAddress)
 
 		if err != nil {
-			log.Fatal("An error happened while checking Onyphe results.")
+			log.Println("An error happened while checking a single host.")
 		} else {
 			var portArray []int
 			for _, singleHost := range gjson.Get(response, "results").Array() {
