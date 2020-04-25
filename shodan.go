@@ -26,7 +26,7 @@ func (s Shodan) sendGETRequest(address string) (string, error) {
 	}
 
 	if resp.StatusCode >= 400 {
-		return "", errors.New("Non 2XX/3XX HTTP code received. ")
+		return "", errors.New("Non-2XX/3XX HTTP code received. ")
 	}
 
 	defer resp.Body.Close()

@@ -58,24 +58,24 @@ func (b Binaryedge) getRequest(address string) (string, error) {
 
 // MAIN FUNCTIONS =============================================
 
-func (b Binaryedge) queryQuota() (int, int) {
+func (b Binaryedge) queryQuota() (int, int, error) {
 	response, err := b.getRequest("https://api.binaryedge.io/v2/user/subscription")
 
 	if err != nil {
-		log.Fatal(err)
+		return 0, 0, err
 	}
 
 	queriesLeft := int(gjson.Get(response, "requests_left").Int())
 	apiPlan := int(gjson.Get(response, "requests_plan").Int())
 
-	return queriesLeft, apiPlan
+	return queriesLeft, apiPlan, nil
 }
 
-func (b Binaryedge) searchPorts(allHosts *[]HostStruct, queryString string) {
+func (b Binaryedge) searchPorts(allHosts *[]HostStruct, queryString string) error {
 	response, err := b.getRequest("https://api.binaryedge.io/v2/query/search?only_ips=1&query=" + queryString)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	results := gjson.Get(response, "events")
@@ -92,6 +92,8 @@ func (b Binaryedge) searchPorts(allHosts *[]HostStruct, queryString string) {
 			}
 		}
 	}
+
+	return nil
 }
 
 func (b Binaryedge) check(allHosts *[]HostStruct) {
@@ -102,7 +104,12 @@ func (b Binaryedge) check(allHosts *[]HostStruct) {
 		return
 	}
 
-	queriesLeft, apiPlan := b.queryQuota()
+	queriesLeft, apiPlan, err := b.queryQuota()
+
+	if err != nil {
+		log.Println("Could not query quota, will skip this resource.")
+		return
+	}
 
 	log.Println("Binaryedge left queries: " + strconv.Itoa(queriesLeft))
 	log.Println("Binaryedge allowance: " + strconv.Itoa(apiPlan))
@@ -141,7 +148,11 @@ func (b Binaryedge) check(allHosts *[]HostStruct) {
 		queryString += "%20AND%20protocol:tcp"
 		queryString += "%20AND%20type:service-simple"
 
-		b.searchPorts(allHosts, queryString)
+		err := b.searchPorts(allHosts, queryString)
+		if err != nil {
+			log.Println("Could not query a batch of hosts.")
+		}
+
 		time.Sleep(2 * time.Second)
 	}
 }
