@@ -3,7 +3,6 @@ Soilgaze is a simple Go application that recovers intel from OSINT sources such 
 
 [![asciicast](https://asciinema.org/a/RX8YYZu88EtxjguZssFE98p45.svg)](https://asciinema.org/a/RX8YYZu88EtxjguZssFE98p45)
 
-
 ## OSINT Resources
 
 The resources below are either already integrated within the application or planned to be integrated in the future.
