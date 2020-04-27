@@ -1,4 +1,4 @@
-package main
+package osint
 
 import (
 	"encoding/json"
@@ -96,7 +96,8 @@ func (z Zoomeye) acquireJWT() (string, error) {
 	return gjson.Get(response, "access_token").String(), nil
 }
 
-func (z Zoomeye) check(allHosts *[]HostStruct) {
+// Check is the interface generic method
+func (z Zoomeye) Check(allHosts *[]HostStruct) {
 	log.Println("================== ZOOMEYE ==================")
 
 	if z.Username == "" || z.Password == "" {

@@ -1,4 +1,4 @@
-package main
+package osint
 
 import (
 	"fmt"
@@ -15,13 +15,13 @@ import (
 
 // Binaryedge struct that holds the API key
 type Binaryedge struct {
-	apiKey string
+	APIKey string
 }
 
 // WEB FUNCTIONS =============================================
 
 func (b Binaryedge) redirectPolicy(req *http.Request, via []*http.Request) error {
-	req.Header.Add("X-Key", b.apiKey)
+	req.Header.Add("X-Key", b.APIKey)
 	return nil
 }
 
@@ -37,7 +37,7 @@ func (b Binaryedge) getRequest(address string) (string, error) {
 		return "", err
 	}
 
-	req.Header.Add("X-Key", b.apiKey)
+	req.Header.Add("X-Key", b.APIKey)
 
 	resp, err := client.Do(req)
 
@@ -96,10 +96,11 @@ func (b Binaryedge) searchPorts(allHosts *[]HostStruct, queryString string) erro
 	return nil
 }
 
-func (b Binaryedge) check(allHosts *[]HostStruct) {
+// Check is the interface generic method
+func (b Binaryedge) Check(allHosts *[]HostStruct) {
 	log.Println("================== BINARYEDGE ==================")
 
-	if b.apiKey == "" {
+	if b.APIKey == "" {
 		log.Println("Binaryedge: API key value is empty, will skip this resource!")
 		return
 	}

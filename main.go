@@ -5,12 +5,13 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"soilgaze/osint"
 	"strings"
 )
 
 // OSINT interface to couple methods with respected .go files
 type OSINT interface {
-	check(*[]HostStruct)
+	Check(*[]osint.HostStruct)
 }
 
 // APIKeys : A struct that holds API key values
@@ -24,31 +25,9 @@ type APIKeys struct {
 	Spyse      string `yaml:"api_spyse"`
 }
 
-// HostStruct holds temporary values before converting to JSON
-type HostStruct struct {
-	IPAddress     string
-	Hostname      []string
-	OSINTResponse OSINTResponses
-}
-
-// OSINTResponses holds responses from OSINT resources
-type OSINTResponses struct {
-	Shodan     OSINTInfo
-	Binaryedge OSINTInfo
-	Censys     OSINTInfo
-	Zoomeye    OSINTInfo
-	Onyphe     OSINTInfo
-	Spyse      OSINTInfo
-}
-
-// OSINTInfo is a generic struct for OSINT information
-type OSINTInfo struct {
-	OpenPorts []int
-}
-
 func main() {
 	var err error
-	var allHosts []HostStruct
+	var allHosts []osint.HostStruct
 	var apiKeys *APIKeys
 
 	var hostFile string
@@ -89,36 +68,36 @@ func main() {
 
 	prepareHostStruct(hostsFileContents, &allHosts)
 
-	var shodan OSINT = Shodan{apiKeys.Shodan}
-	var binaryedge OSINT = Binaryedge{apiKeys.BinaryEdge}
-	var censys OSINT = Censys{apiKeys.Censys}
-	var zoomeye OSINT = Zoomeye{apiKeys.ZoomEyeU, apiKeys.ZoomEyeP}
-	var onyphe OSINT = Onyphe{apiKeys.Onyphe}
-	var spyse OSINT = Spyse{apiKeys.Spyse}
+	var shodan OSINT = osint.Shodan{APIKey: apiKeys.Shodan}
+	var binaryedge OSINT = osint.Binaryedge{APIKey: apiKeys.BinaryEdge}
+	var censys OSINT = osint.Censys{APIKey: apiKeys.Censys}
+	var zoomeye OSINT = osint.Zoomeye{Username: apiKeys.ZoomEyeU, Password: apiKeys.ZoomEyeP}
+	var onyphe OSINT = osint.Onyphe{APIKey: apiKeys.Onyphe}
+	var spyse OSINT = osint.Spyse{APIKey: apiKeys.Spyse}
 
 	if osintList == "" {
-		shodan.check(&allHosts)
-		binaryedge.check(&allHosts)
-		censys.check(&allHosts)
-		zoomeye.check(&allHosts)
-		onyphe.check(&allHosts)
+		shodan.Check(&allHosts)
+		binaryedge.Check(&allHosts)
+		censys.Check(&allHosts)
+		zoomeye.Check(&allHosts)
+		onyphe.Check(&allHosts)
 		// spyse.check(&allHosts)
 	} else {
 		resources := strings.Split(osintList, ",")
 
 		for _, name := range resources {
 			if name == "shodan" {
-				shodan.check(&allHosts)
+				shodan.Check(&allHosts)
 			} else if name == "binaryedge" {
-				binaryedge.check(&allHosts)
+				binaryedge.Check(&allHosts)
 			} else if name == "censys" {
-				censys.check(&allHosts)
+				censys.Check(&allHosts)
 			} else if name == "zoomeye" {
-				zoomeye.check(&allHosts)
+				zoomeye.Check(&allHosts)
 			} else if name == "onyphe" {
-				onyphe.check(&allHosts)
+				onyphe.Check(&allHosts)
 			} else if name == "spyse" {
-				spyse.check(&allHosts)
+				spyse.Check(&allHosts)
 			}
 		}
 	}

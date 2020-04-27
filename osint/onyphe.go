@@ -1,4 +1,4 @@
-package main
+package osint
 
 import (
 	"fmt"
@@ -14,13 +14,13 @@ import (
 
 // Onyphe struct that holds the API key
 type Onyphe struct {
-	apiKey string
+	APIKey string
 }
 
 // WEB FUNCTIONS =============================================
 
 func (o Onyphe) redirectPolicy(req *http.Request, via []*http.Request) error {
-	req.Header.Add("Authorization", "apikey "+o.apiKey)
+	req.Header.Add("Authorization", "apikey "+o.APIKey)
 	return nil
 }
 
@@ -36,7 +36,7 @@ func (o Onyphe) getRequest(address string) (string, error) {
 		return "", err
 	}
 
-	req.Header.Add("Authorization", "apikey "+o.apiKey)
+	req.Header.Add("Authorization", "apikey "+o.APIKey)
 
 	resp, err := client.Do(req)
 
@@ -83,10 +83,11 @@ func (o Onyphe) queryQuota() (int, error) {
 	return credits, nil
 }
 
-func (o Onyphe) check(allHosts *[]HostStruct) {
+// Check is the interface generic method
+func (o Onyphe) Check(allHosts *[]HostStruct) {
 	log.Println("================== ONYPHE ==================")
 
-	if o.apiKey == "" {
+	if o.APIKey == "" {
 		log.Println("API key value is empty, will skip this resource!")
 		return
 	}

@@ -1,4 +1,4 @@
-package main
+package osint
 
 import (
 	"encoding/base64"
@@ -17,7 +17,7 @@ import (
 
 // Censys struct that holds the API key
 type Censys struct {
-	apiKey string
+	APIKey string
 }
 
 type censysQueryBody struct {
@@ -30,7 +30,7 @@ type censysQueryBody struct {
 // WEB FUNCTIONS =============================================
 
 func (c Censys) basicAuth() string {
-	auth := c.apiKey
+	auth := c.APIKey
 	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 func (c Censys) redirectPolicy(req *http.Request, via []*http.Request) error {
@@ -155,10 +155,11 @@ func (c Censys) searchPorts(allHosts *[]HostStruct, filterString string) error {
 	return nil
 }
 
-func (c Censys) check(allHosts *[]HostStruct) {
+// Check is the interface generic method
+func (c Censys) Check(allHosts *[]HostStruct) {
 	log.Println("================== CENSYS ==================")
 
-	if c.apiKey == "" {
+	if c.APIKey == "" {
 		log.Println("Censys: API key value is empty, will skip this resource!")
 		return
 	}

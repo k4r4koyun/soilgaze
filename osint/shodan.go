@@ -1,4 +1,4 @@
-package main
+package osint
 
 import (
 	"errors"
@@ -15,7 +15,7 @@ import (
 
 // Shodan struct that holds the API key
 type Shodan struct {
-	apiKey string
+	APIKey string
 }
 
 func (s Shodan) sendGETRequest(address string) (string, error) {
@@ -39,16 +39,17 @@ func (s Shodan) sendGETRequest(address string) (string, error) {
 	return string(body), nil
 }
 
-func (s Shodan) check(allHosts *[]HostStruct) {
+// Check is the interface generic method
+func (s Shodan) Check(allHosts *[]HostStruct) {
 	log.Println("================== SHODAN ==================")
 
-	if s.apiKey == "" {
+	if s.APIKey == "" {
 		log.Println("Shodan: API key value is empty, will skip this resource!")
 		return
 	}
 
 	for index := range *allHosts {
-		response, err := s.sendGETRequest("https://api.shodan.io/shodan/host/" + (*allHosts)[index].IPAddress + "?key=" + s.apiKey)
+		response, err := s.sendGETRequest("https://api.shodan.io/shodan/host/" + (*allHosts)[index].IPAddress + "?key=" + s.APIKey)
 
 		if err != nil {
 			log.Println(fmt.Errorf("An error occured while checking results: %v", err))

@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"soilgaze/osint"
 
 	"gopkg.in/yaml.v2"
 )
@@ -28,7 +29,7 @@ func extractIP(host string) string {
 	return ip[0].String()
 }
 
-func prepareHostStruct(hostFile []string, allHosts *[]HostStruct) {
+func prepareHostStruct(hostFile []string, allHosts *[]osint.HostStruct) {
 	for _, host := range hostFile {
 		if isIpv4Net(host) {
 			shouldAdd := true
@@ -40,7 +41,7 @@ func prepareHostStruct(hostFile []string, allHosts *[]HostStruct) {
 			}
 
 			if shouldAdd {
-				var hostStruct HostStruct
+				var hostStruct osint.HostStruct
 				hostStruct.IPAddress = host
 				hostStruct.Hostname = []string{}
 
@@ -66,7 +67,7 @@ func prepareHostStruct(hostFile []string, allHosts *[]HostStruct) {
 			}
 
 			if shouldAdd {
-				var hostStruct HostStruct
+				var hostStruct osint.HostStruct
 				hostStruct.IPAddress = ipAddress
 				hostStruct.Hostname = []string{host}
 
